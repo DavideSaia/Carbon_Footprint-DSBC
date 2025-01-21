@@ -1,0 +1,134 @@
+<svg viewBox="0 0 800 1200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Sfondo con gradiente -->
+  <defs>
+    <linearGradient id="bg-gradient" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#f0fff4"/>
+      <stop offset="100%" stop-color="#dcfce7"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="1200" fill="url(#bg-gradient)"/>
+  
+  <!-- Header -->
+  <text x="400" y="60" text-anchor="middle" font-family="Arial" font-size="24" font-weight="bold" fill="#166534">
+    Carbon Footprint Calculator
+  </text>
+  <text x="400" y="90" text-anchor="middle" font-family="Arial" font-size="16" fill="#15803d">
+    Calcola e tokenizza la tua impronta di carbonio
+  </text>
+  
+  <!-- Card di input -->
+  <rect x="50" y="120" width="340" height="420" rx="16" fill="white" filter="url(#shadow)"/>
+  <defs>
+    <filter id="shadow">
+      <feDropShadow dx="0" dy="4" stdDeviation="3" flood-opacity="0.1"/>
+    </filter>
+  </defs>
+  
+  <!-- Titolo card input -->
+  <text x="80" y="160" font-family="Arial" font-size="20" font-weight="bold" fill="#166534">
+    Calcola la tua impronta
+  </text>
+  
+  <!-- Form inputs -->
+  <g transform="translate(80, 200)">
+    <!-- Elettricità -->
+    <text y="20" font-family="Arial" font-size="14" fill="#374151">Consumo elettrico (kWh/anno)</text>
+    <rect y="30" width="280" height="40" rx="8" fill="#f9fafb" stroke="#d1d5db"/>
+    
+    <!-- Auto -->
+    <text y="100" font-family="Arial" font-size="14" fill="#374151">Chilometri in auto (km/anno)</text>
+    <rect y="110" width="280" height="40" rx="8" fill="#f9fafb" stroke="#d1d5db"/>
+    
+    <!-- Voli -->
+    <text y="180" font-family="Arial" font-size="14" fill="#374151">Voli aerei (numero/anno)</text>
+    <rect y="190" width="280" height="40" rx="8" fill="#f9fafb" stroke="#d1d5db"/>
+    
+    <!-- Carne -->
+    <text y="260" font-family="Arial" font-size="14" fill="#374151">Consumo di carne (kg/anno)</text>
+    <rect y="270" width="280" height="40" rx="8" fill="#f9fafb" stroke="#d1d5db"/>
+  </g>
+  
+  <!-- Bottone Calcola -->
+  <rect x="80" y="500" width="280" height="40" rx="8" fill="#16a34a"/>
+  <text x="220" y="525" text-anchor="middle" font-family="Arial" font-size="16" fill="white">Calcola</text>
+  
+  <!-- Card dei risultati -->
+  <rect x="410" y="120" width="340" height="420" rx="16" fill="white" filter="url(#shadow)"/>
+  
+  <!-- Info Location -->
+  <rect x="440" y="160" width="280" height="80" rx="8" fill="#f0fff4"/>
+  <text x="460" y="185" font-family="Arial" font-size="14" fill="#166534">La tua posizione: IT</text>
+  <text x="460" y="215" font-family="Arial" font-size="14" fill="#166534">Prezzo per token: €12.50</text>
+  
+  <!-- Box risultato CO2 -->
+  <rect x="440" y="260" width="280" height="120" rx="8" fill="#f0fff4"/>
+  <text x="580" y="320" text-anchor="middle" font-family="Arial" font-size="24" font-weight="bold" fill="#166534">
+    1245.50 kg CO2
+  </text>
+  <text x="580" y="350" text-anchor="middle" font-family="Arial" font-size="14" fill="#15803d">
+    La tua impronta di carbonio annuale
+  </text>
+  
+  <!-- Box token -->
+  <rect x="440" y="400" width="280" height="120" rx="8" fill="#eff6ff"/>
+  <text x="580" y="460" text-anchor="middle" font-family="Arial" font-size="24" font-weight="bold" fill="#1e40af">
+    13 Carbon Token
+  </text>
+  <text x="580" y="490" text-anchor="middle" font-family="Arial" font-size="14" fill="#2563eb">
+    Token generati per la compensazione
+  </text>
+  
+  <!-- Sezione Progetti -->
+  <text x="400" y="600" text-anchor="middle" font-family="Arial" font-size="24" font-weight="bold" fill="#166534">
+    Progetti disponibili
+  </text>
+  
+  <!-- Progetti Cards -->
+  <!-- Progetto 1 -->
+  <rect x="50" y="640" width="220" height="320" rx="16" fill="white" filter="url(#shadow)"/>
+  <rect x="50" y="640" width="220" height="120" fill="#e5e7eb" rx="16 16 0 0"/>
+  <text x="160" y="810" text-anchor="middle" font-family="Arial" font-size="16" font-weight="bold" fill="#166534">
+    Riforestazione Amazzonica
+  </text>
+  <text x="160" y="840" text-anchor="middle" font-family="Arial" font-size="12" fill="#4b5563">
+    5 Token richiesti
+  </text>
+  <text x="160" y="860" text-anchor="middle" font-family="Arial" font-size="12" fill="#4b5563">
+    500t CO2/anno
+  </text>
+  <text x="160" y="880" text-anchor="middle" font-family="Arial" font-size="14" font-weight="bold" fill="#15803d">
+    €62.50
+  </text>
+  
+  <!-- Progetto 2 -->
+  <rect x="290" y="640" width="220" height="320" rx="16" fill="white" filter="url(#shadow)"/>
+  <rect x="290" y="640" width="220" height="120" fill="#e5e7eb" rx="16 16 0 0"/>
+  <text x="400" y="810" text-anchor="middle" font-family="Arial" font-size="16" font-weight="bold" fill="#166534">
+    Energia Solare in Africa
+  </text>
+  <text x="400" y="840" text-anchor="middle" font-family="Arial" font-size="12" fill="#4b5563">
+    3 Token richiesti
+  </text>
+  <text x="400" y="860" text-anchor="middle" font-family="Arial" font-size="12" fill="#4b5563">
+    300t CO2/anno
+  </text>
+  <text x="400" y="880" text-anchor="middle" font-family="Arial" font-size="14" font-weight="bold" fill="#15803d">
+    €37.50
+  </text>
+  
+  <!-- Progetto 3 -->
+  <rect x="530" y="640" width="220" height="320" rx="16" fill="white" filter="url(#shadow)"/>
+  <rect x="530" y="640" width="220" height="120" fill="#e5e7eb" rx="16 16 0 0"/>
+  <text x="640" y="810" text-anchor="middle" font-family="Arial" font-size="16" font-weight="bold" fill="#166534">
+    Turbine Eoliche
+  </text>
+  <text x="640" y="840" text-anchor="middle" font-family="Arial" font-size="12" fill="#4b5563">
+    8 Token richiesti
+  </text>
+  <text x="640" y="860" text-anchor="middle" font-family="Arial" font-size="12" fill="#4b5563">
+    800t CO2/anno
+  </text>
+  <text x="640" y="880" text-anchor="middle" font-family="Arial" font-size="14" font-weight="bold" fill="#15803d">
+    €100.00
+  </text>
+</svg>

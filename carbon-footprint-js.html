@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carbon Footprint Calculator</title>
+    <style>
+        /* Stili precedenti mantenuti... */
+        /* Aggiunti nuovi stili per la sezione progetti */
+        .projects-section {
+            margin-top: 2rem;
+        }
+
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .project-card {
+            background: white;
+            border-radius: 1rem;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .project-image {
+            width: 100%;
+            height: 200px;
+            background-color: #e5e7eb;
+            object-fit: cover;
+        }
+
+        .project-content {
+            padding: 1.5rem;
+        }
+
+        .project-title {
+            font-size: 1.25rem;
+            font-weight: bold;
+            color: #166534;
+            margin-bottom: 0.5rem;
+        }
+
+        .project-description {
+            color: #4b5563;
+            margin-bottom: 1rem;
+        }
+
+        .project-stats {
+            display: flex;
+            justify-content: space-between;
+            padding-top: 1rem;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        .project-stat {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-weight: bold;
+            color: #166534;
+        }
+
+        .stat-label {
+            font-size: 0.875rem;
+            color: #4b5563;
+        }
+
+        .location-info {
+            background: #f0fff4;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .token-price {
+            font-size: 1.25rem;
+            font-weight: bold;
+            color: #15803d;
+        }
+
+        /* Stili precedenti... */
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header e form precedenti mantenuti... -->
+        
+        <div class="grid">
+            <!-- Prima card mantenuta... -->
+            
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"/>
+                            <path d="M12 6v6l4 2"/>
+                        </svg>
+                        I tuoi risultati
+                    </div>
+                    <div class="card-description">
+                        La tua impronta di carbonio e i token generati
+                    </div>
+                </div>
+
+                <div id="results" class="results">
+                    <div class="empty-state">
+                        Inserisci i tuoi dati e clicca su Calcola per vedere i risultati
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="projects-section">
+            <h2>Progetti disponibili</h2>
+            <div id="projectsGrid" class="projects-grid">
+                <!-- I progetti verranno inseriti qui dinamicamente -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Database dei progetti
+        const projects = [
+            {
+                id: 1,
+                title: "Riforestazione Amazzonica",
+                description: "Progetto di riforestazione nella foresta amazzonica per contrastare la deforestazione",
+                image: "/api/placeholder/400/200",
+                tokenRequired: 5,
+                impact: "500 tonnellate CO2/anno",
+                progress: "75%"
+            },
+            {
+                id: 2,
+                title: "Energia Solare in Africa",
+                description: "Installazione di pannelli solari in comunità rurali africane",
+                image: "/api/placeholder/400/200",
+                tokenRequired: 3,
+                impact: "300 tonnellate CO2/anno",
+                progress: "45%"
+            },
+            {
+                id: 3,
+                title: "Turbine Eoliche",
+                description: "Costruzione di un parco eolico per energia pulita",
+                image: "/api/placeholder/400/200",
+                tokenRequired: 8,
+                impact: "800 tonnellate CO2/anno",
+                progress: "60%"
+            }
+        ];
+
+        // Media delle impronte di carbonio per paese (kg CO2/persona/anno)
+        const countryFootprints = {
+            'IT': 5.8, // Italia
+            'DE': 8.5, // Germania
+            'FR': 4.6, // Francia
+            'US': 15.2, // Stati Uniti
+            'CN': 7.4, // Cina
+            'default': 6.0 // Valore di default
+        };
+
+        // Funzione per ottenere la posizione dell'utente
+        async function getUserLocation() {
+            try {
+                const response = await fetch('https://api.ipapi.com/api/check?access_key=YOUR_API_KEY');
+                const data = await response.json();
+                return data.country_code;
+            } catch (error) {
+                console.error('Errore nel recupero della posizione:', error);
+                return 'default';
+            }
+        }
+
+        // Funzione per calcolare il prezzo del token
+        function calculateTokenPrice(countryCode, carbonFootprint) {
+            const countryAverage = countryFootprints[countryCode] || countryFootprints.default;
+            const ratio = carbonFootprint / (countryAverage * 1000); // Conversione in kg
+            const basePrice = 10; // Prezzo base in EUR
+            return basePrice * ratio;
+        }
+
+        // Funzione per visualizzare i progetti
+        function displayProjects(tokenPrice) {
+            const projectsGrid = document.getElementById('projectsGrid');
+            projectsGrid.innerHTML = projects.map(project => `
+                <div class="project-card">
+                    <img src="${project.image}" alt="${project.title}" class="project-image">
+                    <div class="project-content">
+                        <div class="project-title">${project.title}</div>
+                        <div class="project-description">${project.description}</div>
+                        <div class="project-stats">
+                            <div class="project-stat">
+                                <div class="stat-value">${project.tokenRequired}</div>
+                                <div class="stat-label">Token richiesti</div>
+                            </div>
+                            <div class="project-stat">
+                                <div class="stat-value">${project.impact}</div>
+                                <div class="stat-label">Impatto</div>
+                            </div>
+                            <div class="project-stat">
+                                <div class="stat-value">${project.progress}</div>
+                                <div class="stat-label">Completamento</div>
+                            </div>
+                        </div>
+                        <div class="token-price">
+                            Costo totale: €${(project.tokenRequired * tokenPrice).toFixed(2)}
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Aggiornamento della gestione del form
+        document.getElementById('carbonForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(e.target);
+            const electricity = parseFloat(formData.get('electricity'));
+            const car = parseFloat(formData.get('car'));
+            const flights = parseFloat(formData.get('flights'));
+            const meat = parseFloat(formData.get('meat'));
+
+            const carbonFootprint = (
+                electricity * 0.5 +
+                car * 0.2 +
+                flights * 1.5 +
+                meat * 0.8
+            );
+
+            const tokens = Math.ceil(carbonFootprint / 100);
+            
+            // Ottieni la location e calcola il prezzo del token
+            const countryCode = await getUserLocation();
+            const tokenPrice = calculateTokenPrice(countryCode, carbonFootprint);
+
+            // Aggiorna i risultati
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = `
+                <div class="location-info">
+                    <div>La tua posizione: ${countryCode}</div>
+                    <div>Prezzo per token: €${tokenPrice.toFixed(2)}</div>
+                </div>
+                <div class="result-box">
+                    <div class="value">${carbonFootprint.toFixed(2)} kg CO2</div>
+                    <div class="label">La tua impronta di carbonio annuale</div>
+                </div>
+                <div class="token-box">
+                    <div class="value">${tokens} Carbon Token</div>
+                    <div class="label">Token generati per la compensazione</div>
+                </div>
+            `;
+
+            // Visualizza i progetti con il prezzo calcolato
+            displayProjects(tokenPrice);
+        });
+    </script>
+</body>
+</html>
