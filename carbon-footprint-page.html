@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carbon Footprint Calculator</title>
+    <style>
+        /* Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        /* Body */
+        body {
+            background: linear-gradient(to bottom, #f1f5f9, #e2e8f0);
+            min-height: 100vh;
+            padding: 2rem;
+        }
+
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .header h1 {
+            color: #0e7490;
+            font-size: 2.5rem;
+        }
+
+        .header p {
+            color: #075985;
+            font-size: 1.2rem;
+        }
+
+        /* Main Grid */
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+
+        /* Card */
+        .card {
+            background: #f0f9ff;
+            border-radius: 1rem;
+            padding: 2rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .card-header {
+            margin-bottom: 1.5rem;
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+            color: #0e7490;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* Form */
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #2563eb;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid #bfdbfe;
+            border-radius: 0.5rem;
+        }
+
+        /* Button */
+        .btn {
+            width: 100%;
+            padding: 0.75rem;
+            background-color: #0369a1;
+            color: white;
+            border: none;
+            border-radius: 0.5rem;
+            cursor: pointer;
+        }
+
+        /* Results */
+        .results-section {
+            margin-top: 2rem;
+        }
+
+        .result-card {
+            background: #f0f9ff;
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        /* Projects */
+        .projects-section {
+            margin-top: 2rem;
+        }
+
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+        }
+
+        .project-card {
+            background: #f0f9ff;
+            border-radius: 1rem;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .project-image {
+            width: 100%;
+            height: 200px;
+            background-color: #e2e8f0;
+        }
+
+        .project-content {
+            padding: 1.5rem;
+        }
+
+        .project-title {
+            font-size: 1.25rem;
+            font-weight: bold;
+            color: #0e7490;
+            margin-bottom: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Carbon Footprint Calculator</h1>
+            <p>Calcola e tokenizza la tua impronta di carbonio</p>
+        </div>
+
+        <div class="main-grid">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">Calcola la tua impronta</div>
+                </div>
+                <form id="carbonForm">
+                    <div class="form-group">
+                        <label>Consumo elettrico (kWh/anno)</label>
+                        <input type="number" name="electricity" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Chilometri in auto (km/anno)</label>
+                        <input type="number" name="car" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Voli aerei (numero/anno)</label>
+                        <input type="number" name="flights" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Consumo di carne (kg/anno)</label>
+                        <input type="number" name="meat" required>
+                    </div>
+                    <button type="submit" class="btn">Calcola</button>
+                </form>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">I tuoi risultati</div>
+                </div>
+                <div id="resultsContainer">
+                    <div class="result-card" id="locationInfo"></div>
+                    <div class="result-card" id="carbonFootprintResult"></div>
+                    <div class="result-card" id="tokenResult"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="projects-section">
+            <h2>Progetti disponibili</h2>
+            <div class="projects-grid" id="projectsContainer">
+                <!-- Project cards will be inserted here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const carbonProjects = [
+            {
+                name: "Riforestazione Amazzonica",
+                description: "Progetto di riforestazione",
+                tokensRequired: 5,
+                carbonOffset: 500
+            },
+            {
+                name: "Energia Solare in Africa",
+                description: "Installazione pannelli solari",
+                tokensRequired: 3,
+                carbonOffset: 300
+            },
+            {
+                name: "Turbine Eoliche",
+                description: "Costruzione parco eolico",
+                tokensRequired: 8,
+                carbonOffset: 800
+            }
+        ];
+
+        const projectsContainer = document.getElementById('projectsContainer');
+
+        carbonProjects.forEach(project => {
+            const projectCard = document.createElement('div');
+            projectCard.classList.add('project-card');
+
+            const projectImage = document.createElement('div');
+            projectImage.classList.add('project-image');
+            projectCard.appendChild(projectImage);
+
+            const projectContent = document.createElement('div');
+            projectContent.classList.add('project-content');
+
+            const projectTitle = document.createElement('div');
+            projectTitle.classList.add('project-title');
+            projectTitle.textContent = project.name;
+            projectContent.appendChild(projectTitle);
+
+            const projectDescription = document.createElement('p');
+            projectDescription.textContent = project.description;
+            projectContent.appendChild(projectDescription);
+
+            const tokensRequired = document.createElement('p');
+            tokensRequired.textContent = `Token richiesti: ${project.tokensRequired}`;
+            projectContent.appendChild(tokensRequired);
+
+            const carbonOffset = document.createElement('p');
+            carbonOffset.textContent = `Offset CO2: ${project.carbonOffset} t/anno`;
+            projectContent.appendChild(carbonOffset);
+
+            projectCard.appendChild(projectContent);
+            projectsContainer.appendChild(projectCard);
+        });
+    </script>
+</body>
+</html>
