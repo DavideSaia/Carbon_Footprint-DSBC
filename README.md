@@ -37,5 +37,3 @@ We developed a comprehensive web application and blockchain solution for carbon 
 - Geolocation-aware pricing
 - NFT-based carbon token system
 - Flexible project compensation mechanism
-
-Would you like me to elaborate on any specific section?
