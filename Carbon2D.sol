@@ -13,8 +13,7 @@ contract Carbon2D is ERC20, Ownable {
         uint256 price;
         bool active;
         uint256 totalContributed;
-        address projectOwner; // Aggiunto: proprietario del progetto
-        uint256 maxTokensPerUser; // Aggiunto: limite massimo di token per utente
+        address projectOwner; // Proprietario del progetto
     }
     
     // Struttura per i dati dell'impronta di carbonio
@@ -34,31 +33,30 @@ contract Carbon2D is ERC20, Ownable {
     // Mapping per memorizzare i dati
     mapping(address => CarbonData) public userCarbonData;
     mapping(uint256 => CompensationProject) public projects;
-    mapping(uint256 => mapping(address => uint256)) public userContributions; // Aggiunto: contributi degli utenti per progetto
+    mapping(uint256 => mapping(address => uint256)) public userContributions; // Contributi degli utenti per progetto
     uint256 public projectCounter;
-    uint256 public totalMintedTokens; // Aggiunto: totale dei token mintati
+    uint256 public totalMintedTokens; // Totale dei token mintati
     
     // Eventi per tracciare le azioni
     event TokensMinted(address indexed recipient, uint256 amount, uint256 emissions);
-    event ProjectCreated(uint256 projectId, string name, uint256 price, uint256 maxTokensPerUser);
+    event ProjectCreated(uint256 projectId, string name, uint256 price);
     event ProjectCompensated(uint256 projectId, address indexed user, uint256 tokens);
-    event ProjectRedeemed(uint256 projectId, address indexed projectOwner, uint256 tokens);
+    event ProjectCompleted(uint256 projectId, address indexed projectOwner, uint256 tokens);
 
     constructor() ERC20("Carbon2D", "C2D") Ownable(msg.sender) {
         projectCounter = 0;
         totalMintedTokens = 0;
         // Inizializza i progetti predefiniti
-        _createProject("Riforestazione Amazzonica", 5, 500, 62500000000000000, 2); // 0.0625 ETH, max 2 token per utente
-        _createProject("Energia Solare in Africa", 3, 300, 37500000000000000, 1); // 0.0375 ETH, max 1 token per utente
-        _createProject("Turbine Eoliche", 8, 800, 100000000000000000, 3); // 0.1 ETH, max 3 token per utente
+        _createProject("Riforestazione Amazzonica", 5, 500, 62500000000000000); // 0.0625 ETH
+        _createProject("Energia Solare in Africa", 3, 300, 37500000000000000); // 0.0375 ETH
+        _createProject("Turbine Eoliche", 8, 800, 100000000000000000); // 0.1 ETH
     }
 
     function _createProject(
         string memory name,
         uint256 requiredTokens,
         uint256 co2Reduction,
-        uint256 price,
-        uint256 maxTokensPerUser
+        uint256 price
     ) internal {
         projectCounter++;
         projects[projectCounter] = CompensationProject(
@@ -68,10 +66,9 @@ contract Carbon2D is ERC20, Ownable {
             price,
             true,
             0,
-            msg.sender, // Il creatore del progetto è il proprietario
-            maxTokensPerUser
+            msg.sender // Il creatore del progetto è il proprietario
         );
-        emit ProjectCreated(projectCounter, name, price, maxTokensPerUser);
+        emit ProjectCreated(projectCounter, name, price);
     }
 
     // Funzione per creare un nuovo progetto (pubblica)
@@ -79,10 +76,9 @@ contract Carbon2D is ERC20, Ownable {
         string memory name,
         uint256 requiredTokens,
         uint256 co2Reduction,
-        uint256 price,
-        uint256 maxTokensPerUser
+        uint256 price
     ) public {
-        _createProject(name, requiredTokens, co2Reduction, price, maxTokensPerUser);
+        _createProject(name, requiredTokens, co2Reduction, price);
     }
 
     // Funzione per acquistare token
@@ -139,32 +135,23 @@ contract Carbon2D is ERC20, Ownable {
     function compensateProject(uint256 projectId, uint256 tokenAmount) public {
         require(projects[projectId].active, "Project not active");
         require(balanceOf(msg.sender) >= tokenAmount, "Insufficient tokens");
-        require(tokenAmount <= projects[projectId].maxTokensPerUser, "Exceeds max tokens per user");
-        require(userContributions[projectId][msg.sender] + tokenAmount <= projects[projectId].maxTokensPerUser, "Exceeds max tokens per user");
 
-        _burn(msg.sender, tokenAmount);
+        // Calcola il massimo di token che l'utente può contribuire
+        uint256 remainingTokens = projects[projectId].requiredTokens - projects[projectId].totalContributed;
+        require(tokenAmount <= remainingTokens, "Exceeds remaining tokens for the project");
+
+        // Trasferisci i token dal contributore al contratto
+        _transfer(msg.sender, address(this), tokenAmount);
         projects[projectId].totalContributed += tokenAmount;
         userContributions[projectId][msg.sender] += tokenAmount;
         emit ProjectCompensated(projectId, msg.sender, tokenAmount);
 
-        // Se l'obiettivo è raggiunto, disattiva il progetto
+        // Se l'obiettivo è raggiunto, disattiva il progetto e trasferisci i token al proprietario
         if (projects[projectId].totalContributed >= projects[projectId].requiredTokens) {
             projects[projectId].active = false;
+            _transfer(address(this), projects[projectId].projectOwner, projects[projectId].totalContributed);
+            emit ProjectCompleted(projectId, projects[projectId].projectOwner, projects[projectId].totalContributed);
         }
-    }
-
-    // Funzione per riscattare i token di un progetto completato
-    function redeemProject(uint256 projectId) public {
-        require(!projects[projectId].active, "Project is still active");
-        require(projects[projectId].totalContributed >= projects[projectId].requiredTokens, "Project goal not reached");
-        require(projects[projectId].projectOwner == msg.sender, "Only project owner can redeem");
-
-        uint256 tokensToRedeem = projects[projectId].totalContributed;
-        uint256 ethAmount = tokensToRedeem * TOKEN_PRICE;
-
-        // Trasferisci l'ETH al proprietario del progetto
-        payable(msg.sender).transfer(ethAmount);
-        emit ProjectRedeemed(projectId, msg.sender, tokensToRedeem);
     }
 
     // Funzione per ottenere lo stato di avanzamento del progetto
